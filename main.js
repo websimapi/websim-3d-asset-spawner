@@ -35,8 +35,38 @@ const assetListUl = document.getElementById('asset-list');
 const infoBox = document.getElementById('info');
 
 // Loaders
-const gltfLoader = new GLTFLoader();
-const textureLoader = new THREE.TextureLoader();
+const manager = new THREE.LoadingManager();
+const gltfLoader = new GLTFLoader(manager);
+const textureLoader = new THREE.TextureLoader(manager);
+
+// This will intercept the requests for sub-assets (.bin, .png) and prepend the correct base URL
+// where these assets are known to be hosted.
+manager.setURLModifier((url) => {
+    const assetPath = 'https://cdn.jsdelivr.net/gh/kenneyNL/gltf-assets@1.0.0/Models/';
+
+    if (url.startsWith('data:') || url.startsWith('blob:')) {
+        return url;
+    }
+
+    // The base .gltf files are at the root, so we only modify paths for sub-assets.
+    if (!url.endsWith('.gltf') && !url.endsWith('.glb')) {
+        // Find which asset folder this resource belongs to.
+        // This is a bit of a guess based on common asset pack structures.
+        const assetName = document.querySelector(`li[data-path$="${currentAssetPath}"]`).textContent.trim();
+        
+        let subfolder = '';
+        if (assetName.toLowerCase().includes('tree') || assetName.toLowerCase().includes('pine')) subfolder = 'Nature/';
+        if (assetName.toLowerCase().includes('flower') || assetName.toLowerCase().includes('grass') || assetName.toLowerCase().includes('mushroom') || assetName.toLowerCase().includes('plant') || assetName.toLowerCase().includes('clover') || assetName.toLowerCase().includes('fern') || assetName.toLowerCase().includes('bush')) subfolder = 'Nature/';
+        if (assetName.toLowerCase().includes('rock') || assetName.toLowerCase().includes('pebble')) subfolder = 'Nature/';
+        
+        const modifiedUrl = assetPath + subfolder + url;
+        return modifiedUrl;
+    }
+
+    return url;
+});
+
+let currentAssetPath = ''; // To help URL modifier
 
 function init() {
     // Scene
@@ -119,6 +149,7 @@ function onAssetClick(event) {
     if (event.target.tagName === 'LI') {
         const path = event.target.dataset.path;
         if (path) {
+            currentAssetPath = path; // Set current asset path for the URL modifier
             infoBox.textContent = `Loading ${event.target.textContent}...`;
             gltfLoader.load(path, 
                 (gltf) => {
@@ -153,12 +184,14 @@ function onAssetClick(event) {
 
                     scene.add(model);
                     infoBox.textContent = `${event.target.textContent} added!`;
+                    currentAssetPath = ''; // Clear after loading
                     setTimeout(() => infoBox.textContent = 'Press `~` to toggle asset menu', 2000);
                 },
                 undefined, // onProgress callback (optional)
                 (error) => {
                     console.error('An error happened while loading the model:', error);
                     infoBox.textContent = `Error loading ${event.target.textContent}`;
+                    currentAssetPath = ''; // Clear on error
                 }
             );
         }
@@ -172,4 +205,3 @@ function animate() {
 }
 
 init();
-
