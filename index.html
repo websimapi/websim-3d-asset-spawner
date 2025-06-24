@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3D Asset Spawner</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: sans-serif; background-color: #111; }
+        canvas { display: block; }
+        #admin-menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(30, 30, 30, 0.9);
+            color: white;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 10;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        #admin-menu.visible {
+            transform: translateX(0);
+        }
+        #admin-menu h2 {
+            margin-top: 0;
+            text-align: center;
+            border-bottom: 1px solid #555;
+            padding-bottom: 10px;
+        }
+        #asset-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        #asset-list li {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #444;
+            transition: background-color 0.2s;
+            font-size: 0.9em;
+        }
+        #asset-list li:hover {
+            background-color: #555;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 5;
+            pointer-events: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">Press `~` to toggle asset menu</div>
+    <div id="admin-menu">
+        <h2>Assets</h2>
+        <ul id="asset-list"></ul>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.163.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.163.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module" src="/main.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
+
